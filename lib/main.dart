@@ -1,12 +1,17 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:todo/models/to_do_model.dart';
+import 'package:get/get.dart';
+import 'package:todo/models/data_management.dart';
 import 'package:todo/screens/home_page.dart';
 import 'package:todo/screens/splash_screen.dart';
 import 'package:todo/style.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 
 void main(List<String> args) => runApp(
-      MaterialApp(
+      GetMaterialApp(
+        scrollBehavior: const MaterialScrollBehavior().copyWith(dragDevices: {
+          PointerDeviceKind.mouse,
+          PointerDeviceKind.touch,
+        }),
         debugShowCheckedModeBanner: false,
         theme: ThemeData(primarySwatch: primarySwatch),
         home: const MyApp(),
@@ -23,16 +28,12 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   bool isLoaded = false;
   bool isShowingSplash = false;
-
-  Box? box;
+  final DataManagement dataManagement = Get.put(DataManagement());
 
   // Load data from database
   void loadinData() async {
     WidgetsFlutterBinding.ensureInitialized();
-    await Future.delayed(const Duration(seconds: 2));
-    await Hive.initFlutter();
-    Hive.registerAdapter(ToDoModelAdapter());
-    box = await Hive.openBox("to_do_list");
+    await dataManagement.init();
     setState(() => isLoaded = true);
   }
 

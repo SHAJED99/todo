@@ -1,26 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:todo/models/data_management.dart';
+import 'package:todo/models/to_do_model.dart';
+import 'package:todo/screens/new_task_page.dart';
 import 'package:todo/style.dart';
 import 'package:todo/widgets/buttons.dart';
 import 'package:todo/widgets/popup_background.dart';
 
-class CustomListTile extends StatefulWidget {
-  final bool status;
-  final String head;
-  final String time;
-  const CustomListTile({Key? key, required this.head, required this.time, this.status = false}) : super(key: key);
+class CustomListTile extends StatelessWidget {
+  final int index;
+  final DataManagement dataManagement = Get.find();
 
-  @override
-  State<CustomListTile> createState() => _CustomListTileState();
-}
-
-class _CustomListTileState extends State<CustomListTile> {
-  late bool status;
-
-  @override
-  void initState() {
-    super.initState();
-    status = widget.status;
-  }
+  CustomListTile({super.key, required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +20,15 @@ class _CustomListTileState extends State<CustomListTile> {
         children: [
           GestureDetector(
             onTap: () {
-              setState(() => status = !status);
+              // Change status
+              dataManagement.editData(
+                index: index,
+                toDoModel: ToDoModel(
+                  status: !dataManagement.box.values.elementAt(index).status,
+                  text: dataManagement.box.values.elementAt(index).text,
+                  time: dataManagement.box.values.elementAt(index).time,
+                ),
+              );
             },
             child: Container(
               width: boxConstraints.maxWidth,
@@ -37,7 +36,7 @@ class _CustomListTileState extends State<CustomListTile> {
               padding: const EdgeInsets.symmetric(horizontal: padding / 2, vertical: padding / 2),
               constraints: const BoxConstraints(minHeight: 60),
               decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor.withOpacity(status ? 0.7 : 1),
+                color: Theme.of(context).primaryColor.withOpacity(dataManagement.box.values.elementAt(index).status ? 0.7 : 1),
                 borderRadius: BorderRadius.circular(padding / 2),
                 boxShadow: shadow,
               ),
@@ -49,11 +48,11 @@ class _CustomListTileState extends State<CustomListTile> {
                   Row(
                     children: [
                       TweenAnimationBuilder(
-                        tween: Tween<double>(begin: 0, end: status ? 1 : 0),
+                        tween: Tween<double>(begin: 0, end: dataManagement.box.values.elementAt(index).status ? 1 : 0),
                         duration: duration,
                         builder: (context, value, child) => AnimatedContainer(
                           duration: duration,
-                          width: !status ? 0 : iconSize * 2,
+                          width: !dataManagement.box.values.elementAt(index).status ? 0 : iconSize * 2,
                           child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: Row(
@@ -66,12 +65,15 @@ class _CustomListTileState extends State<CustomListTile> {
                         ),
                       ),
                       // Name
-                      Text(widget.head, style: head1),
+                      Expanded(child: Text(dataManagement.box.values.elementAt(index).text, style: head1)),
                     ],
                   ),
                   const SizedBox(height: padding / 3),
                   // Time
-                  Text(widget.time, style: subTitle1),
+                  Text(
+                    "${timeConvert(dateTime: dataManagement.box.values.elementAt(index).time)} ${dataManagement.box.values.elementAt(index).time.day.toString().padLeft(2, '0')}/${dataManagement.box.values.elementAt(index).time.month.toString().padLeft(2, '0')}/${dataManagement.box.values.elementAt(index).time.year.toString().padLeft(4, '0')}",
+                    style: subTitle1,
+                  ),
                 ],
               ),
             ),
@@ -82,10 +84,12 @@ class _CustomListTileState extends State<CustomListTile> {
             bottom: padding / 2,
             child: Row(
               children: [
+                // Edit task
                 CustomIconButton(
                   icons: Icons.edit,
-                  onTap: () {},
+                  onTap: () => showDialog(context: context, builder: (context) => EditToDo(index: index)),
                 ),
+                // Delete task
                 CustomIconButton(
                   icons: Icons.delete,
                   onTap: () {
@@ -102,9 +106,16 @@ class _CustomListTileState extends State<CustomListTile> {
                               mainAxisSize: MainAxisSize.min,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                ElevatedButton(onPressed: () {}, child: const Text("Yes")),
+                                // Yes
+                                ElevatedButton(
+                                    onPressed: () {
+                                      dataManagement.editData(index: index);
+                                      Get.back();
+                                    },
+                                    child: const Text("Yes")),
                                 const SizedBox(width: padding / 2),
-                                ElevatedButton(onPressed: () => Navigator.pop(context), child: const Text("No")),
+                                // No
+                                ElevatedButton(onPressed: () => Get.back(), child: const Text("No")),
                               ],
                             ),
                           ],
@@ -120,4 +131,19 @@ class _CustomListTileState extends State<CustomListTile> {
       );
     });
   }
+}
+
+// This convert time to 12 hour and add am/pm at the end
+String timeConvert({required DateTime dateTime}) {
+  String amOrPm;
+  if (dateTime.hour < 12) {
+    amOrPm = 'AM';
+  } else {
+    amOrPm = 'PM';
+  }
+
+  int hour12 = dateTime.hour % 12;
+  hour12 = hour12 == 0 ? 12 : hour12;
+
+  return '${hour12.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')} $amOrPm';
 }

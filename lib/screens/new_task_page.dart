@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:todo/models/data_management.dart';
 import 'package:todo/models/to_do_model.dart';
 import 'package:todo/style.dart';
 import 'package:todo/widgets/popup_background.dart';
 import 'package:todo/widgets/text_form_field.dart';
 
-class AddNewToDo extends StatelessWidget {
-  final ToDoModel? toDoModel;
+class EditToDo extends StatelessWidget {
+  final int? index;
   final GlobalKey<FormState> _formKey = GlobalKey();
+  final TextEditingController textEditingController = TextEditingController();
+  final DataManagement dataManagement = Get.find();
 
-  AddNewToDo({super.key, this.toDoModel});
+  EditToDo({
+    super.key,
+    this.index,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,12 +26,13 @@ class AddNewToDo extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(toDoModel == null ? "Add new task" : "Edit task", style: head1),
+              Text(index == null ? "Add new task" : "Edit task", style: head1),
               const SizedBox(height: padding / 2),
               Material(
                 color: Colors.transparent,
                 child: CustomTextFormField(
-                  hintText: toDoModel == null ? "Add new task" : toDoModel!.text,
+                  textEditingController: textEditingController,
+                  hintText: index == null ? "Add new task" : dataManagement.box.values.elementAt(index!).text,
                   maxLines: 6,
                   height: -1,
                   textAlignVertical: TextAlignVertical.top,
@@ -40,11 +48,20 @@ class AddNewToDo extends StatelessWidget {
                 children: [
                   ElevatedButton(
                       onPressed: () {
-                        _formKey.currentState!.validate();
+                        if (!_formKey.currentState!.validate()) return;
+                        dataManagement.editData(
+                          index: index,
+                          toDoModel: ToDoModel(
+                            status: false,
+                            text: textEditingController.text,
+                            time: DateTime.now(),
+                          ),
+                        );
+                        Get.back();
                       },
                       child: const Text("Save")),
                   const SizedBox(width: padding / 2),
-                  ElevatedButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
+                  ElevatedButton(onPressed: () => Get.back(), child: const Text("Cancel")),
                 ],
               )
             ],

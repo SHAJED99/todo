@@ -12,6 +12,7 @@ class PopupBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
+        constraints: const BoxConstraints(maxWidth: 500),
         margin: const EdgeInsets.symmetric(horizontal: padding),
         padding: const EdgeInsets.symmetric(horizontal: padding, vertical: padding),
         decoration: BoxDecoration(
