@@ -1,16 +1,33 @@
-# todo
+# ToDo App
 
-A new Flutter project.
+A simple ToDo app built with Flutter that uses Hive for data storage and GetX for state management.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
-A few resources to get you started if this is your first Flutter project:
+### Prerequisites
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+You will need to have Flutter and Dart installed on your machine.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Installing
+
+Clone the repository to your local machine:
+
+$ git clone https://github.com/SHAJED99/todo.git
+
+Navigate to the project directory and run the following command to install the dependencies:
+
+$ flutter packages get
+
+### Running the App
+
+Run the following command to run the app on an emulator or connected device:
+
+$ flutter run
+
+## Built With
+
+- [Flutter](https://flutter.dev/) - The mobile app framework used
+- [Hive](https://docs.hivedb.dev/) - A fast, lightweight and key-value database for Flutter
+- [GetX](https://pub.dev/packages/get) - A powerful and easy-to-use state management solution for Flutter
