@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 // Container/Background Style
-const MaterialColor primarySwatch = Colors.green;
+const MaterialColor primarySwatch = Colors.blue;
 const double defaultBoxHeight = 40;
 const double padding = 16;
 

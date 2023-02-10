@@ -26,7 +26,7 @@ Run the following command to run the app on an emulator or connected device:
 
 $ flutter run
 
-## Built With
+### Built With
 
 - [Flutter](https://flutter.dev/) - The mobile app framework used
 - [Hive](https://docs.hivedb.dev/) - A fast, lightweight and key-value database for Flutter
